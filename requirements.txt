@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+google-generativeai
+google-genai
+google-auth
+python-dotenv
+pydantic
+PyJWT[crypto]
+SQLAlchemy
+stripe
+

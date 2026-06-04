@@ -1,0 +1,159 @@
+.history-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    padding: 1rem;
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.history-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+}
+
+.history-empty {
+    text-align: center;
+    color: var(--color-surface-light);
+    padding: 2rem;
+}
+
+.history-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-surface-light);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.history-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+}
+
+.history-card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-surface-light);
+}
+
+.history-result {
+    font-weight: bold;
+}
+
+.result-win {
+    color: var(--color-accent);
+}
+
+.result-lose {
+    color: var(--color-secondary);
+}
+
+.result-draw {
+    color: var(--color-surface-light);
+}
+
+.result-midway {
+    color: #ff9800; /* オレンジ色 */
+}
+
+.history-delete-btn {
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+.history-delete-btn:hover {
+    opacity: 1;
+    background-color: rgba(255, 77, 79, 0.1);
+}
+
+.history-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.history-char {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.history-topic {
+    flex: 1;
+    font-size: 1.1rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-score {
+    font-size: 0.9rem;
+    color: var(--color-primary);
+}
+
+.history-detail {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.history-turns {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.history-msg {
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    max-width: 80%;
+}
+
+.msg-user {
+    align-self: flex-end;
+    background: rgba(var(--color-primary-rgb), 0.2);
+    border: 1px solid rgba(var(--color-primary-rgb), 0.3);
+    border-bottom-right-radius: 0;
+}
+
+.msg-ai {
+    align-self: flex-start;
+    background: rgba(var(--color-secondary-rgb), 0.2);
+    border: 1px solid rgba(var(--color-secondary-rgb), 0.3);
+    border-bottom-left-radius: 0;
+}
+
+.msg-role {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin-bottom: 0.25rem;
+}
+
+.msg-content {
+    font-size: 1rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}

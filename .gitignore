@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Build
+dist/
+build/
+
+# Environment (secrets)
+.env
+.env.local
+frontend/.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Database
+backend/arena.db
+backend/*.db
+
+# Temp / test files
+temp/
+frontend/temp_check.js
+frontend/test_login.js
+frontend/login_result.png
+frontend/build_error.log
+frontend/build_error_utf8.log
+frontend/build_output.log
+check_direct.log
+check_node_version.log
+check_version.log
+backend/attack_results.json
+backend/round*.log

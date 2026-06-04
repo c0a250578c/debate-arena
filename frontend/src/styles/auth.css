@@ -1,0 +1,102 @@
+/* ============================================
+   UserBadge - Header user info + ticket balance
+   ============================================ */
+
+.user-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    background: rgba(20, 20, 32, 0.6);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 9999px;
+    backdrop-filter: blur(10px);
+    font-size: 0.85rem;
+    max-width: 100%;
+}
+
+.user-badge__avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.user-badge__avatar--fallback {
+    border: none;
+}
+
+.user-badge__info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+    line-height: 1.2;
+}
+
+.user-badge__name {
+    color: var(--text-primary, #f0f0f5);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
+.user-badge__tickets {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.7rem;
+    color: #a78bfa;
+    cursor: pointer;
+    user-select: none;
+}
+
+.user-badge__tickets--empty {
+    color: #f87171;
+    animation: pulse-warn 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse-warn {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+.user-badge__shop,
+.user-badge__logout {
+    font-size: 0.72rem !important;
+    padding: 4px 10px !important;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .user-badge {
+        padding: 4px 8px;
+        gap: 6px;
+    }
+
+    .user-badge__name {
+        max-width: 80px;
+        font-size: 0.75rem;
+    }
+
+    .user-badge__logout {
+        display: none;
+    }
+}

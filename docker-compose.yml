@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: debate-arena-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - ALLOWED_ORIGINS=http://localhost,http://localhost:80
+    volumes:
+      - ./backend/arena.db:/app/backend/arena.db
+    expose:
+      - "8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: debate-arena-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"

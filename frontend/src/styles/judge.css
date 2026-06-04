@@ -1,0 +1,317 @@
+/* ============================================
+   Judge Result Modal Styles
+   ============================================ */
+
+.judge-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.3s ease;
+  padding: var(--space-lg);
+}
+
+.judge-modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  animation: fadeInUp 0.4s ease;
+}
+
+/* --- Header --- */
+.judge-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.judge-modal__title {
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+.judge-modal__close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-medium);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.judge-modal__close:hover {
+  background: var(--bg-glass-hover);
+  color: var(--text-primary);
+}
+
+/* --- Winner Banner --- */
+.judge-modal__winner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  margin: var(--space-lg) var(--space-xl);
+  border-radius: var(--radius-lg);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.judge-modal__winner--user {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(16, 185, 129, 0.1));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--accent-green);
+}
+
+.judge-modal__winner--ai {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(239, 68, 68, 0.1));
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--accent-red);
+}
+
+.judge-modal__winner-icon {
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+}
+
+/* --- Total Scores --- */
+.judge-modal__totals {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xl);
+  padding: var(--space-lg) var(--space-xl);
+}
+
+.judge-modal__total-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.judge-modal__total-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.judge-modal__total-score {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.judge-modal__total-unit {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.judge-modal__total-vs {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* --- Score Breakdown --- */
+.judge-modal__breakdown {
+  padding: var(--space-lg) var(--space-xl);
+}
+
+.judge-modal__section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+  letter-spacing: 0.05em;
+}
+
+.score-bar-row {
+  margin-bottom: var(--space-md);
+}
+
+.score-bar-row__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.score-bar-row__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.score-bar-row__bar-container {
+  height: 22px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.score-bar-row__bar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: var(--space-sm);
+  min-width: 30px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.score-bar-row__bar--user {
+  background: linear-gradient(90deg, var(--accent-purple), rgba(139, 92, 246, 0.7));
+}
+
+.score-bar-row__bar--ai {
+  background: linear-gradient(90deg, var(--accent-pink), rgba(236, 72, 153, 0.7));
+}
+
+.score-bar-row__value {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: white;
+}
+
+.score-bar-row__legend {
+  display: flex;
+  gap: var(--space-lg);
+  justify-content: center;
+  margin-top: var(--space-md);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.score-bar-row__legend-user {
+  color: var(--accent-purple);
+}
+
+.score-bar-row__legend-ai {
+  color: var(--accent-pink);
+}
+
+/* --- Feedback --- */
+.judge-modal__feedback {
+  padding: var(--space-lg) var(--space-xl);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.judge-modal__feedback-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: var(--space-md);
+}
+
+.judge-modal__highlight {
+  padding: var(--space-md);
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.judge-modal__highlight-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+  margin-bottom: var(--space-xs);
+  display: block;
+}
+
+.judge-modal__highlight p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* --- Close Button --- */
+.judge-modal__close-btn {
+  display: block;
+  margin: var(--space-lg) auto var(--space-xl);
+  padding: var(--space-md) var(--space-3xl);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .judge-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .judge-modal {
+    max-height: 100vh;
+    max-height: 100dvh;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+
+  .judge-modal__header {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .judge-modal__winner {
+    margin: var(--space-md) var(--space-lg);
+  }
+
+  .judge-modal__totals {
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .judge-modal__total-score {
+    font-size: 2rem;
+  }
+
+  .judge-modal__breakdown {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .judge-modal__feedback {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .score-bar-row__value {
+    font-size: 0.65rem;
+  }
+}
+
+.judge-modal__reward {
+  margin: 0.75rem 1.5rem 0;
+  padding: 0.65rem 1rem;
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15));
+  border: 1px solid rgba(255, 215, 0, 0.45);
+  border-radius: 8px;
+  color: #ffd700;
+  font-weight: 600;
+  text-align: center;
+  font-size: 0.95rem;
+}
