@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: debate-arena-backend
+    env: docker
+    dockerfilePath: Dockerfile.backend
+    region: singapore
+    plan: starter
+    envVars:
+      - key: SQLITE_DB_PATH
+        value: /data/arena.db
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: MODEL_NAME
+        value: gemini-2.5-flash
+      - key: MAX_RETRIES
+        value: "5"
+      - key: ALLOWED_ORIGINS
+        value: https://frontend-navy-five-55.vercel.app
+      - key: TICKET_SHOP_URL
+        value: https://frontend-navy-five-55.vercel.app/shop-mock
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLERK_JWKS_URL
+        value: https://adequate-terrier-35.clerk.accounts.dev/.well-known/jwks.json
+      - key: VITE_CLERK_PUBLISHABLE_KEY
+        value: pk_test_YWRlcXVhdGUtdGVycmllci0zNS5jbGVyay5hY2NvdW50cy5kZXYk
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRICE_SUB_MONTHLY
+        sync: false
+      - key: STRIPE_PRICE_SUB_ANNUAL
+        sync: false
+      - key: STRIPE_PRICE_TICKETS_10
+        sync: false
+    disk:
+      name: arena-database-volume
+      mountPath: /data
+      sizeGB: 1
