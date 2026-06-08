@@ -45,9 +45,10 @@ export const apiClient = {
     return res.json();
   },
 
-  async me() {
+  async me(options = {}) {
     const res = await fetch(`${API_BASE}/api/auth/me`, {
       headers: { ...authHeaders() },
+      ...options,
     });
     await throwIfNotOk(res);
     return res.json();

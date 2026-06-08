@@ -11,7 +11,7 @@ import './styles/auth.css';
 import { useEffect } from 'react';
 
 function AppInner() {
-  const { user, loading } = useAuth();
+  const { user, loading, authError } = useAuth();
   const [screen, setScreen] = useState('select');
   const [battleConfig, setBattleConfig] = useState(null);
 
@@ -45,6 +45,23 @@ function AppInner() {
         background: '#050508', color: 'rgba(240,240,245,0.6)', fontFamily: "'Noto Sans JP', sans-serif",
       }}>
         Loading...
+      </div>
+    );
+  }
+
+  if (authError) {
+    return (
+      <div style={{
+        minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        background: '#050508', color: '#fca5a5', fontFamily: "'Noto Sans JP', sans-serif", padding: 24, textAlign: 'center'
+      }}>
+        <h2 style={{ color: '#ef4444', marginBottom: 12, fontFamily: "'Orbitron', sans-serif" }}>CONNECTION ERROR</h2>
+        <p style={{ maxWidth: 450, fontSize: '0.92rem', lineHeight: '1.6', color: 'rgba(240,240,245,0.7)', marginBottom: 20 }}>
+          {authError}
+        </p>
+        <button onClick={() => window.location.reload()} className="btn btn-outline btn-sm">
+          再読み込み
+        </button>
       </div>
     );
   }

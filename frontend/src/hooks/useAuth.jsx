@@ -14,6 +14,7 @@ function ClerkAuthProvider({ children }) {
     const { getToken, isSignedIn, isLoaded: clerkLoaded, signOut } = useClerkAuth();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [authError, setAuthError] = useState(null);
 
     const refresh = useCallback(async () => {
         if (!clerkLoaded) return;
@@ -26,11 +27,21 @@ function ClerkAuthProvider({ children }) {
         try {
             const token = await getToken();
             apiClient.setToken(token);
-            const me = await apiClient.me();
+            
+            // AbortController to prevent hanging fetch
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout
+            
+            const me = await apiClient.me({ signal: controller.signal });
+            clearTimeout(timeoutId);
             setUser(me);
+            setAuthError(null);
         } catch (e) {
             console.warn('[auth] Clerk refresh failed:', e);
             setUser(null);
+            setAuthError(e.name === 'AbortError' 
+                ? 'APIサーバーからの応答がありません。起動に時間がかかっている可能性があります。' 
+                : 'APIサーバーとの通信でエラーが発生しました。');
         } finally {
             setLoading(false);
         }
@@ -40,12 +51,27 @@ function ClerkAuthProvider({ children }) {
         if (clerkLoaded) {
             refresh();
         }
-    }, [clerkLoaded, isSignedIn, refresh]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [clerkLoaded, isSignedIn]);
+
+    // Force release loading block after 8 seconds of inactivity
+    useEffect(() => {
+        if (!clerkLoaded || loading) {
+            const timer = setTimeout(() => {
+                setLoading(false);
+                if (!clerkLoaded) {
+                    setAuthError('Clerk（認証システム）の起動に失敗しました。APIキーまたはネットワーク接続を確認してください。');
+                }
+            }, 8000);
+            return () => clearTimeout(timer);
+        }
+    }, [clerkLoaded, loading]);
 
     const logout = useCallback(async () => {
         await signOut();
         apiClient.setToken(null);
         setUser(null);
+        setAuthError(null);
     }, [signOut]);
 
     const decrementTicket = useCallback(() => {
@@ -55,8 +81,9 @@ function ClerkAuthProvider({ children }) {
     return (
         <AuthContext.Provider value={{
             user,
-            loading: !clerkLoaded || loading,
-            loginWithGoogleIdToken: async () => {}, // Clerk時は不要
+            loading: !clerkLoaded && loading,
+            authError,
+            loginWithGoogleIdToken: async () => {},
             logout,
             refresh,
             decrementTicket,
