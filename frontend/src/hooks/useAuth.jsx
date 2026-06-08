@@ -28,9 +28,9 @@ function ClerkAuthProvider({ children }) {
             const token = await getToken();
             apiClient.setToken(token);
             
-            // AbortController to prevent hanging fetch
+            // AbortController to prevent hanging fetch (Render Free plan takes ~50s to wake up)
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout
+            const timeoutId = setTimeout(() => controller.abort(), 55000); // 55s timeout
             
             const me = await apiClient.me({ signal: controller.signal });
             clearTimeout(timeoutId);
@@ -54,7 +54,7 @@ function ClerkAuthProvider({ children }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [clerkLoaded, isSignedIn]);
 
-    // Force release loading block after 8 seconds of inactivity
+    // Force release loading block after 60 seconds of inactivity to support spin-up delays
     useEffect(() => {
         if (!clerkLoaded || loading) {
             const timer = setTimeout(() => {
@@ -62,7 +62,7 @@ function ClerkAuthProvider({ children }) {
                 if (!clerkLoaded) {
                     setAuthError('Clerk（認証システム）の起動に失敗しました。APIキーまたはネットワーク接続を確認してください。');
                 }
-            }, 8000);
+            }, 60000); // 60s timeout
             return () => clearTimeout(timer);
         }
     }, [clerkLoaded, loading]);
