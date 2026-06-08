@@ -8,6 +8,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+# Ensure database directory exists with correct permissions
+RUN mkdir -p /data && chmod 777 /data
+
 # system deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential curl \

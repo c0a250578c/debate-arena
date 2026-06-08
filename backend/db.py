@@ -23,11 +23,24 @@ DB_PATH = os.getenv("SQLITE_DB_PATH", DEFAULT_DB_PATH)
 
 # 親ディレクトリが存在しない場合は自動作成（Renderの永続ディスクマウント用）
 db_dir = os.path.dirname(DB_PATH)
-if db_dir and not os.path.exists(db_dir):
+use_fallback = False
+
+if db_dir:
     try:
-        os.makedirs(db_dir, exist_ok=True)
+        if not os.path.exists(db_dir):
+            os.makedirs(db_dir, exist_ok=True)
+        # Test write capability in target database directory
+        test_file = os.path.join(db_dir, ".write_test")
+        with open(test_file, "w") as f:
+            f.write("test")
+        os.remove(test_file)
     except Exception as e:
-        logger.error("Failed to create database directory %s: %s", db_dir, e)
+        logger.error("Database directory %s is not writeable: %s. Falling back to default path.", db_dir, e)
+        use_fallback = True
+
+if use_fallback:
+    DB_PATH = DEFAULT_DB_PATH
+    logger.info("Using fallback database path: %s", DB_PATH)
 
 DB_URL = f"sqlite:///{DB_PATH}"
 
