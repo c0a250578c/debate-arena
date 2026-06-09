@@ -53,7 +53,7 @@ MODEL_NAME = os.getenv("MODEL_NAME", "gemini-2.5-flash")
 MAX_RETRIES = int(os.getenv("MAX_RETRIES", "5"))
 RETRY_DELAYS = [1, 2, 4, 8, 16]  # exponential backoff (covers 503 spikes)
 
-ALLOWED_ORIGINS_RAW = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000")
+ALLOWED_ORIGINS_RAW = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000,https://frontend-navy-five-55.vercel.app")
 ALLOWED_ORIGINS = [origin.strip() for origin in ALLOWED_ORIGINS_RAW.split(",") if origin.strip()]
 
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "")
