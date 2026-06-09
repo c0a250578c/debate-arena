@@ -75,7 +75,15 @@ else:
 if DEV_MODE:
     logger.warning("AUTH DEV MODE: GOOGLE_CLIENT_ID not set. Accepting 'dev-<email>' tokens.")
 
-client = genai.Client(api_key=api_key)
+client = None
+if api_key:
+    try:
+        client = genai.Client(api_key=api_key)
+        logger.info("GenAI Client initialized successfully.")
+    except Exception as e:
+        logger.error("Failed to initialize GenAI Client: %s", e)
+else:
+    logger.warning("GOOGLE_API_KEY environment variable is missing or empty. GenAI Client is disabled.")
 
 init_db()
 
@@ -184,6 +192,10 @@ FALLBACK_MESSAGES = _load_json("fallbacks.json")
 async def health_check():
     """Health check including Gemini API connectivity."""
     status = {"status": "ok", "model": MODEL_NAME, "api_key_set": bool(api_key)}
+    if not client:
+        status["gemini"] = "not_initialized"
+        status["status"] = "degraded"
+        return status
     try:
         response = await asyncio.to_thread(
             client.models.generate_content,
@@ -277,6 +289,12 @@ async def debate_stream(req: DebateRequest, user: User = Depends(current_user)):
     """Stream debate response via Server-Sent Events.
     Consumes 1 ticket on the first user message of a battle.
     """
+    if not client:
+        raise HTTPException(
+            status_code=500,
+            detail="Gemini APIクライアントが初期化されていません。GOOGLE_API_KEY環境変数を確認してください。"
+        )
+
     # 履歴が空でもfirst_strikeなら許可する
     if not req.history and not req.first_strike:
         raise HTTPException(status_code=400, detail="history must not be empty unless first_strike is true")
@@ -440,6 +458,12 @@ async def debate_stream(req: DebateRequest, user: User = Depends(current_user)):
 @app.post("/api/debate/judge")
 async def judge_debate(req: JudgeRequest, user: User = Depends(current_user)):
     """AI Judge evaluates the debate."""
+    if not client:
+        raise HTTPException(
+            status_code=500,
+            detail="Gemini APIクライアントが初期化されていません。GOOGLE_API_KEY環境変数を確認してください。"
+        )
+
     if not req.history or len(req.history) < 2:
         raise HTTPException(status_code=400, detail="At least 2 messages required for judging")
 
@@ -578,6 +602,9 @@ async def heckle(req: HeckleRequest, user: User = Depends(current_user)):
     - 失敗時は空配列を返し、フロント側のUXを阻害しない
     - 入力はサニタイズしてプロンプトインジェクションを抑制
     """
+    if not client:
+        return {"heckles": []}
+
     user_clean = sanitize_user_input(req.user_message or "")[:600]
     ai_clean = (req.ai_message or "").strip()[:600]
 
@@ -856,6 +883,11 @@ async def stripe_webhook(request: Request):
 @app.post("/api/debate/coach")
 async def get_coach_advice(req: CoachRequest, user: User = Depends(current_user)):
     """Provides strategic advice (second/coach) for the user."""
+    if not client:
+        raise HTTPException(
+            status_code=500,
+            detail="Gemini APIクライアントが初期化されていません。GOOGLE_API_KEY環境変数を確認してください。"
+        )
     char_config = CHARACTER_PROMPTS.get(req.character_id, CHARACTER_PROMPTS.get("gentleman"))
     
     system_prompt = (
