@@ -4,7 +4,11 @@ SSE streaming + character system + auto-retry + AI judge
 + Google SSO login + ticket-based billing (external shop + webhook)
 Using google-genai (new SDK)
 """
+import sys
 import os
+# 実行環境に関わらずインポートパスを解決する安全設計（RenderネイティブPython環境対応）
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 import re
 import json
 import hmac
