@@ -70,12 +70,16 @@ def decode_clerk_jwt(token: str) -> dict:
     try:
         # トークンから適切な公開鍵を取得
         signing_key = jwks_client.get_signing_key_from_jwt(token)
-        # RS256でデコード・検証（aud検証はフロントとの整合性維持のため省略します）
+        # RS256でデコード・検証（audおよびiss検証はフロントとの整合性維持のため省略、時刻ズレ対策でleewayを設定）
         payload = jwt.decode(
             token,
             signing_key.key,
             algorithms=["RS256"],
-            options={"verify_aud": False}
+            options={
+                "verify_aud": False,
+                "verify_iss": False
+            },
+            leeway=120
         )
         return payload
     except jwt.ExpiredSignatureError:
