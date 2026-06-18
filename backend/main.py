@@ -190,8 +190,16 @@ FALLBACK_MESSAGES = _load_json("fallbacks.json")
 
 @app.get("/api/health")
 async def health_check():
-    """Health check including Gemini API connectivity."""
-    status = {"status": "ok", "model": MODEL_NAME, "api_key_set": bool(api_key)}
+    """Health check including Gemini API connectivity with fallback."""
+    global MODEL_NAME
+    status = {
+        "status": "ok", 
+        "model": MODEL_NAME, 
+        "api_key_set": bool(api_key),
+        "DEV_MODE": DEV_MODE,
+        "clerk_jwks_url": os.getenv("CLERK_JWKS_URL", ""),
+        "clerk_pub_key_len": len(os.getenv("VITE_CLERK_PUBLISHABLE_KEY", "") or os.getenv("CLERK_PUBLISHABLE_KEY", ""))
+    }
     if not client:
         status["gemini"] = "not_initialized"
         status["status"] = "degraded"
@@ -204,8 +212,25 @@ async def health_check():
         )
         status["gemini"] = "connected"
     except Exception as e:
-        status["gemini"] = f"error: {type(e).__name__}"
+        status["gemini"] = f"error: {type(e).__name__}: {str(e)}"
         status["status"] = "degraded"
+        
+        # Test fallbacks
+        fallbacks = ["gemini-2.0-flash", "gemini-1.5-flash"]
+        for fallback in fallbacks:
+            try:
+                await asyncio.to_thread(
+                    client.models.generate_content,
+                    model=fallback,
+                    contents="ping",
+                )
+                MODEL_NAME = fallback
+                status["gemini"] = f"connected (fallback to {fallback})"
+                status["model"] = MODEL_NAME
+                status["status"] = "ok"
+                break
+            except Exception as fe:
+                pass
     return status
 
 
