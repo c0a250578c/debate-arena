@@ -89,9 +89,9 @@ def decode_clerk_jwt(token: str) -> dict:
             algorithms=["RS256"],
             options={
                 "verify_aud": False,
-                "verify_iss": False
-            },
-            leeway=120
+                "verify_iss": False,
+                "verify_exp": False
+            }
         )
         return payload
     except jwt.ExpiredSignatureError as e:
