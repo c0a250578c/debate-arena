@@ -19,6 +19,18 @@ JWT_SECRET = os.getenv("JWT_SECRET", "dev_secret_change_me")
 JWT_ALGO = "HS256"
 JWT_EXPIRES_HOURS = int(os.getenv("JWT_EXPIRES_HOURS", "168"))
 
+DEBUG_LOGS = []
+
+def add_debug_log(message: str):
+    global DEBUG_LOGS
+    DEBUG_LOGS.append({
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "message": message
+    })
+    if len(DEBUG_LOGS) > 100:
+        DEBUG_LOGS.pop(0)
+
+
 def resolve_jwks_url_from_publishable_key(pub_key: str) -> str | None:
     try:
         if not pub_key or not pub_key.startswith("pk_"):
@@ -82,9 +94,13 @@ def decode_clerk_jwt(token: str) -> dict:
             leeway=120
         )
         return payload
-    except jwt.ExpiredSignatureError:
+    except jwt.ExpiredSignatureError as e:
+        add_debug_log(f"JWT ExpiredSignatureError: {str(e)}")
         raise HTTPException(status_code=401, detail="Token expired")
     except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        add_debug_log(f"JWT decode failed: {type(e).__name__}: {str(e)}\n{tb}")
         logger.warning("Clerk token verify failed: %s: %s", type(e).__name__, e)
         raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
 
@@ -129,9 +145,17 @@ def decode_jwt(token: str) -> dict:
 
 def current_user(authorization: str | None = Header(default=None)) -> User:
     """FastAPI dependency: extract user from Bearer Token (Clerk Token or local JWT)."""
-    if not authorization or not authorization.lower().startswith("bearer "):
+    if not authorization:
+        add_debug_log("current_user: Missing Authorization header")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing Authorization header")
-    token = authorization.split(" ", 1)[1].strip()
+    
+    token_parts = authorization.split(" ", 1)
+    if len(token_parts) < 2 or token_parts[0].lower() != "bearer":
+        add_debug_log(f"current_user: Invalid Authorization format: {authorization[:20]}...")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Authorization header format")
+        
+    token = token_parts[1].strip()
+    add_debug_log(f"current_user: Token received (length={len(token)}, prefix={token[:15]}...)")
 
     if DEV_MODE:
         # 開発モード: ローカルJWTまたは直接のdev-ダミートークンを受け入れる

@@ -38,7 +38,7 @@ load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 # --- Local modules (must be imported AFTER load_dotenv) ---
 from db import init_db, session_scope, consume_ticket, add_tickets_idempotent, User, Battle, BattleTurn, is_user_premium
-from auth import current_user, login_with_google, DEV_MODE
+from auth import current_user, login_with_google, DEV_MODE, DEBUG_LOGS, add_debug_log
 from security import (
     sanitize_user_input,
     detect_injection,
@@ -243,6 +243,13 @@ async def auth_me(user: User = Depends(current_user)):
             "ticket_balance": u.ticket_balance,
             "shop_url": TICKET_SHOP_URL,
         }
+
+
+@app.get("/api/debug/logs")
+async def get_debug_logs():
+    """Get internal memory debug logs (public for troubleshooting)."""
+    return {"logs": DEBUG_LOGS}
+
 
 
 @app.post("/api/webhook/purchase")
