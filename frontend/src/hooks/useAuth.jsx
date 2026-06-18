@@ -39,9 +39,14 @@ function ClerkAuthProvider({ children }) {
         } catch (e) {
             console.warn('[auth] Clerk refresh failed:', e);
             setUser(null);
-            setAuthError(e.name === 'AbortError' 
-                ? 'APIサーバーからの応答がありません。起動に時間がかかっている可能性があります。' 
-                : 'APIサーバーとの通信でエラーが発生しました。');
+            let errMsg = 'APIサーバーとの通信でエラーが発生しました。';
+            if (e.name === 'AbortError') {
+                errMsg = 'APIサーバーからの応答がありません。起動に時間がかかっている可能性があります。';
+            } else if (e.status) {
+                const detail = e.body?.detail || '';
+                errMsg = `APIエラー (${e.status}): ${detail || e.message}`;
+            }
+            setAuthError(errMsg);
         } finally {
             setLoading(false);
         }
