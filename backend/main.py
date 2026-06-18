@@ -48,8 +48,9 @@ from security import (
 )
 
 # --- Config from environment ---
-api_key = os.getenv("GOOGLE_API_KEY")
-MODEL_NAME = os.getenv("MODEL_NAME", "gemini-2.5-flash")
+api_key_raw = os.getenv("GOOGLE_API_KEY")
+api_key = api_key_raw.strip() if api_key_raw else None
+MODEL_NAME = os.getenv("MODEL_NAME", "gemini-2.5-flash").strip()
 MAX_RETRIES = int(os.getenv("MAX_RETRIES", "5"))
 RETRY_DELAYS = [1, 2, 4, 8, 16]  # exponential backoff (covers 503 spikes)
 

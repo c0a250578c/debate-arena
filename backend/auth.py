@@ -14,8 +14,8 @@ logger = logging.getLogger("debate-arena.auth")
 
 import base64
 
-CLERK_JWKS_URL = os.getenv("CLERK_JWKS_URL", "")
-JWT_SECRET = os.getenv("JWT_SECRET", "dev_secret_change_me")
+CLERK_JWKS_URL = os.getenv("CLERK_JWKS_URL", "").strip()
+JWT_SECRET = os.getenv("JWT_SECRET", "dev_secret_change_me").strip()
 JWT_ALGO = "HS256"
 JWT_EXPIRES_HOURS = int(os.getenv("JWT_EXPIRES_HOURS", "168"))
 
@@ -47,11 +47,11 @@ def resolve_jwks_url_from_publishable_key(pub_key: str) -> str | None:
 
 # CLERK_JWKS_URLが設定されていない、あるいは古いエンドポイントの場合、Publishable Keyから自動解決を試みる
 if not CLERK_JWKS_URL or "api.clerk.com" in CLERK_JWKS_URL:
-    pub_key = os.getenv("CLERK_PUBLISHABLE_KEY") or os.getenv("VITE_CLERK_PUBLISHABLE_KEY") or ""
+    pub_key = (os.getenv("CLERK_PUBLISHABLE_KEY") or os.getenv("VITE_CLERK_PUBLISHABLE_KEY") or "").strip()
     resolved = resolve_jwks_url_from_publishable_key(pub_key)
     if resolved:
         logger.info("Automatically resolved CLERK_JWKS_URL: %s", resolved)
-        CLERK_JWKS_URL = resolved
+        CLERK_JWKS_URL = resolved.strip()
 
 # Clerkの鍵セットのURLが未指定であれば、開発モード（ローカルJWT / ダミー認証許可）
 DEV_MODE = not CLERK_JWKS_URL
